@@ -23,6 +23,7 @@ export const FORM: Section[] = [
       { id: "phone", label: "Phone", type: "tel", placeholder: "04…", hint: "Optional. Only used for event-day logistics." },
       { id: "slack_handle", label: "Your name on Slack", type: "text", hint: "As it appears in the MLAI Slack, so we can link your profile." },
       { id: "linkedin", label: "LinkedIn", type: "url", placeholder: "https://linkedin.com/in/…" },
+      { id: "gender", label: "Gender", type: "select", options: ["Woman", "Man", "Non-binary", "Prefer to self-describe", "Prefer not to say"], hint: "Optional. Helps us track how representative our events and speakers are." },
       { id: "location", label: "Where are you based?", type: "select", required: true, options: ["Melbourne", "Sydney", "Brisbane", "Canberra", "Adelaide", "Perth", "Regional Australia", "Outside Australia"] },
       { id: "role_title", label: "Current role", type: "text", placeholder: "e.g. ML Engineer, PhD student, Founder" },
       { id: "organisation", label: "Organisation", type: "text", placeholder: "Company, university or 'independent'" },
