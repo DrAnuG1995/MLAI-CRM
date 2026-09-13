@@ -6,3 +6,6 @@ dist
 .DS_Store
 *.log
 .vercel
+supabase/.temp
+# Member data exports stay out of the (public) repo
+supabase/seed/*.csv

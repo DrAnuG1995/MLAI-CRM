@@ -87,6 +87,12 @@ export interface Person {
   tags: string[];
   notes: string | null;
   last_touch_at: string | null;
+  location?: string | null;
+  interests?: string[];
+  offers?: string[];
+  ai_level?: string | null;
+  startup_status?: string | null;
+  startup_name?: string | null;
   created_at: string;
   updated_at: string;
   organisation?: Pick<Organisation, "id" | "name"> | null;

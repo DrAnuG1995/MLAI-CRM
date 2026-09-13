@@ -17,6 +17,8 @@ import TeamPage from "@/crm/team/TeamPage";
 import OnboardingPage from "@/crm/auth/OnboardingPage";
 import ModuleGuard from "@/crm/shared/components/ModuleGuard";
 import { InviteLinkRedirect } from "@/crm/auth/InviteLinkRedirect";
+import JoinPage from "@/public/JoinPage";
+import SubmissionsPage from "@/crm/people/SubmissionsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
@@ -35,6 +37,7 @@ export default function App() {
           <InviteLinkRedirect />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/join" element={<JoinPage />} />
             <Route element={<AuthGuard />}>
               <Route path="onboarding" element={<OnboardingPage />} />
               <Route element={<CrmLayout />}>
@@ -44,6 +47,7 @@ export default function App() {
                 </Route>
                 <Route element={<ModuleGuard module="people" />}>
                   <Route path="people" element={<PeoplePage />} />
+                  <Route path="people/submissions" element={<SubmissionsPage />} />
                   <Route path="people/:id" element={<PersonDetailPage />} />
                 </Route>
                 <Route element={<ModuleGuard module="organisations" />}>

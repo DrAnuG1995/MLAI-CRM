@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, Search, Download } from "lucide-react";
+import { Users, Search, Download, Inbox } from "lucide-react";
 import { PersonDialog } from "./PersonDialog";
 import { useCurrentUser } from "../shared/hooks/useCurrentUser";
 import { PERSON_TYPES, FOLLOW_UP_DAYS, label } from "../shared/types";
@@ -107,9 +107,14 @@ export default function PeoplePage() {
         actionLabel={writable ? "Add person" : undefined}
         onAction={writable ? () => setDialogOpen(true) : undefined}
         extraActions={
-          <Button variant="outline" onClick={() => downloadCSV(filtered)} disabled={!filtered.length}>
-            <Download className="mr-2 h-4 w-4" /> CSV
-          </Button>
+          <>
+            <Button variant="outline" onClick={() => navigate("/people/submissions")}>
+              <Inbox className="mr-2 h-4 w-4" /> Form responses
+            </Button>
+            <Button variant="outline" onClick={() => downloadCSV(filtered)} disabled={!filtered.length}>
+              <Download className="mr-2 h-4 w-4" /> CSV
+            </Button>
+          </>
         }
       />
 
