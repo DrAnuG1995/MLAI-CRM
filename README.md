@@ -51,8 +51,11 @@ To make yourself an admin after first sign-in:
 `.github/workflows/deploy.yml` builds the app and publishes it to GitHub
 Pages on every push to `main`. Set repo **variables** `VITE_SUPABASE_URL` and
 `VITE_SUPABASE_ANON_KEY`, enable Pages (Source: GitHub Actions), and add
-`public/CNAME` if serving from a custom domain. Routing is hash-based so deep
-links work on a static host.
+`public/CNAME` if serving from a custom domain. The Vite base is relative, so
+the build works at a project-pages subpath and at a domain root; routing is
+hash-based so deep links work on a static host.
+
+Live: https://dranug1995.github.io/MLAI-CRM/
 
 ## Layout
 
