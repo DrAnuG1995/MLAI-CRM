@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import kangaroo from "@/assets/mlai-kangaroo.png";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -26,13 +27,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center bg-[#1F3A6A] px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl">
+    <div className="flex min-h-full items-center justify-center bg-[#0b0b0b] px-4">
+      <div className="w-full max-w-sm rounded-2xl bg-[#f9f7f2] p-8 shadow-xl">
         <div className="mb-6 text-center">
-          <span className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-[#A4D65E] text-base font-bold text-[#1F3A6A]">
-            ML
-          </span>
-          <div className="text-lg font-semibold tracking-tight text-[#1F3A6A]">MLAI CRM</div>
+          <img src={kangaroo} alt="MLAI" className="mx-auto mb-3 h-16 w-16" />
+          <div className="text-lg font-semibold tracking-tight text-[#008080]">MLAI CRM</div>
           <p className="mt-1 text-sm text-muted-foreground">Sign in to manage the community</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
@@ -45,7 +44,7 @@ export default function LoginPage() {
             <Input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
-          <Button type="submit" disabled={busy} className="w-full bg-[#1F3A6A] hover:bg-[#1F3A6A]/90">
+          <Button type="submit" disabled={busy} className="w-full bg-[#008080] hover:bg-[#008080]/90">
             {busy ? "Signing in…" : "Sign in"}
           </Button>
         </form>

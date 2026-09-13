@@ -83,7 +83,7 @@ export default function EditUserDialog({ member, open, onOpenChange, isOnlyAdmin
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label>Module access</Label>
-              {role !== "admin" && matrixDirty && <button type="button" className="text-xs text-[#1F3A6A] hover:underline" onClick={() => setPerms(roleChanged ? defaultPermsForRole(role) : member.perms)}>Reset</button>}
+              {role !== "admin" && matrixDirty && <button type="button" className="text-xs text-[#008080] hover:underline" onClick={() => setPerms(roleChanged ? defaultPermsForRole(role) : member.perms)}>Reset</button>}
             </div>
             <PermissionMatrix value={role === "admin" ? defaultPermsForRole("admin") : perms} onChange={setPerms} disabled={role === "admin"} />
             {role === "admin" && <p className="text-xs text-muted-foreground">Admins always have full access to every module.</p>}
@@ -91,7 +91,7 @@ export default function EditUserDialog({ member, open, onOpenChange, isOnlyAdmin
         </div>
         <DialogFooter className="pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={() => mutation.mutate()} disabled={!isDirty || willDemoteOnlyAdmin || mutation.isPending} className="bg-[#1F3A6A] hover:bg-[#1F3A6A]/90">{mutation.isPending ? "Saving…" : "Save changes"}</Button>
+          <Button onClick={() => mutation.mutate()} disabled={!isDirty || willDemoteOnlyAdmin || mutation.isPending} className="bg-[#008080] hover:bg-[#008080]/90">{mutation.isPending ? "Saving…" : "Save changes"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

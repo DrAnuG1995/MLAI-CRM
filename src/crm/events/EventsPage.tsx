@@ -40,7 +40,7 @@ function EventCard({ e, past, onClick }: { e: EventRow; past: boolean; onClick: 
   const d = new Date(e.starts_at);
   return (
     <Card onClick={onClick} className="flex cursor-pointer gap-4 p-4 transition-shadow hover:shadow-md">
-      <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-lg bg-[#1F3A6A]/5 py-2 text-[#1F3A6A]">
+      <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-lg bg-[#008080]/5 py-2 text-[#008080]">
         <span className="text-xl font-bold leading-none">{d.toLocaleDateString("en-AU", { day: "numeric", timeZone: "Australia/Melbourne" })}</span>
         <span className="text-[10px] font-semibold uppercase tracking-wide">{d.toLocaleDateString("en-AU", { month: "short", timeZone: "Australia/Melbourne" })}</span>
       </div>

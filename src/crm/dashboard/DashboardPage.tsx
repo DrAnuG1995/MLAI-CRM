@@ -82,7 +82,7 @@ function MetricCard({ title, value, subtitle, icon: Icon, onClick }: { title: st
         <Icon className="h-5 w-5 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-[#1F3A6A]">{value}</div>
+        <div className="text-2xl font-bold text-[#008080]">{value}</div>
         <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
       </CardContent>
     </Card>
@@ -150,7 +150,7 @@ export default function DashboardPage() {
               <ul className="divide-y">
                 {m?.upcoming.map((e) => (
                   <li key={e.id} onClick={() => navigate(`/events/${e.id}`)} className="flex cursor-pointer items-center gap-3 px-6 py-3 hover:bg-gray-50">
-                    <span className="w-24 shrink-0 text-xs font-medium text-[#1F3A6A]">{formatDate(e.starts_at)}</span>
+                    <span className="w-24 shrink-0 text-xs font-medium text-[#008080]">{formatDate(e.starts_at)}</span>
                     <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{e.title}</span><span className="block truncate text-xs text-muted-foreground">{[label(e.kind), e.venue].filter(Boolean).join(" · ")}</span></span>
                     <StatusBadge status={e.status} />
                   </li>

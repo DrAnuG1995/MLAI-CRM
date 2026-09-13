@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..500&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,51 +9,52 @@
    of tokens that give the CRM its navy sidebar and grey workspace. */
 @layer base {
   :root {
-    --background: 240 47% 91%;
-    --foreground: 240 30% 12%;
+    /* MLAI brand (mlai.au): warm paper ground, teal primary, mint accent */
+    --background: 40 44% 97%;
+    --foreground: 0 0% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 30% 12%;
+    --card-foreground: 0 0% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 30% 12%;
+    --popover-foreground: 0 0% 4%;
 
-    --primary: 68 78% 59%;
-    --primary-foreground: 240 30% 12%;
+    --primary: 180 100% 25%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 47% 85%;
-    --secondary-foreground: 240 30% 12%;
+    --secondary: 40 30% 92%;
+    --secondary-foreground: 0 0% 4%;
 
-    --muted: 240 30% 94%;
-    --muted-foreground: 240 10% 45%;
+    --muted: 40 20% 94%;
+    --muted-foreground: 0 0% 44%;
 
-    --accent: 68 78% 59%;
-    --accent-foreground: 240 30% 12%;
+    --accent: 170 100% 50%;
+    --accent-foreground: 0 0% 4%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 350 100% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 20% 85%;
-    --input: 240 20% 85%;
-    --ring: 68 78% 59%;
+    --border: 40 12% 86%;
+    --input: 40 12% 86%;
+    --ring: 180 100% 25%;
 
-    --radius: 1rem;
+    --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 170 100% 50%;
+    --sidebar-accent-foreground: 0 0% 4%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 170 100% 50%;
 
-    --lime: 68 78% 59%;
-    --lime-hover: 68 78% 52%;
-    --sd-blue: 234 40% 22%;
-    --navy: 240 30% 12%;
-    --lavender: 240 47% 91%;
-    --lavender-dark: 240 47% 85%;
+    --lime: 170 100% 50%;
+    --lime-hover: 170 100% 42%;
+    --sd-blue: 239 71% 54%;
+    --navy: 0 0% 4%;
+    --lavender: 40 44% 97%;
+    --lavender-dark: 40 30% 92%;
     --white-surface: 0 0% 100%;
   }
 }
@@ -64,26 +65,30 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   html, body, #root {
     height: 100%;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.01em;
   }
 }
 
-/* CRM Theme Overrides */
+/* CRM Theme Overrides — MLAI brand (mlai.au): black shell, mint active,
+   teal primary, warm-white workspace. */
 .crm-theme {
-  --background: 0 0% 97%;
+  --background: 40 44% 97%;
   --card: 0 0% 100%;
-  --primary: 220 54% 27%;
+  --primary: 180 100% 25%;
   --primary-foreground: 0 0% 100%;
-  --sidebar-background: 220 54% 27%;
+  --ring: 180 100% 25%;
+  --radius: 0.5rem;
+  --sidebar-background: 0 0% 4%;
   --sidebar-foreground: 0 0% 100%;
   --sidebar-primary: 0 0% 100%;
-  --sidebar-primary-foreground: 220 54% 27%;
-  --sidebar-accent: 68 78% 59%;
-  --sidebar-accent-foreground: 220 54% 27%;
+  --sidebar-primary-foreground: 0 0% 4%;
+  --sidebar-accent: 170 100% 50%;
+  --sidebar-accent-foreground: 0 0% 4%;
 }

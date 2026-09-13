@@ -180,7 +180,7 @@ export function PersonDialog({
           </div>
           <DialogFooter className="sm:col-span-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={save.isPending} className="bg-[#1F3A6A] hover:bg-[#1F3A6A]/90">{person ? "Save changes" : "Add person"}</Button>
+            <Button type="submit" disabled={save.isPending} className="bg-[#008080] hover:bg-[#008080]/90">{person ? "Save changes" : "Add person"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

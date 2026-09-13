@@ -47,7 +47,7 @@ export default function MembersTable({ members, currentUserId, onEdit, allMember
               <TableRow key={m.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8"><AvatarFallback className="bg-[#1F3A6A] text-xs text-white">{initials(m.full_name, m.email)}</AvatarFallback></Avatar>
+                    <Avatar className="h-8 w-8"><AvatarFallback className="bg-[#008080] text-xs text-white">{initials(m.full_name, m.email)}</AvatarFallback></Avatar>
                     <div className="flex flex-col">
                       <span className="font-medium text-gray-900">{m.full_name || "—"}{isMe && <span className="ml-2 text-xs font-normal text-gray-400">(you)</span>}</span>
                       <span className="text-xs text-gray-500">{m.email}</span>

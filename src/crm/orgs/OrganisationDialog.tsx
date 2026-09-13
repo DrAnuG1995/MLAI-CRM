@@ -79,7 +79,7 @@ export function OrganisationDialog({ open, onOpenChange, org, onSaved }: { open:
           <div className="space-y-1.5 sm:col-span-2"><Label>Notes</Label><Textarea value={form.notes} onChange={(e) => set("notes")(e.target.value)} rows={3} /></div>
           <DialogFooter className="sm:col-span-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={save.isPending} className="bg-[#1F3A6A] hover:bg-[#1F3A6A]/90">{org ? "Save changes" : "Add organisation"}</Button>
+            <Button type="submit" disabled={save.isPending} className="bg-[#008080] hover:bg-[#008080]/90">{org ? "Save changes" : "Add organisation"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

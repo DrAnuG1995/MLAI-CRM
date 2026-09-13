@@ -142,7 +142,7 @@ export default function EventDetailPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate("/events")}><ArrowLeft className="h-5 w-5" /></Button>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#1F3A6A]">{event.title}</h1>
+            <h1 className="text-2xl font-bold text-[#008080]">{event.title}</h1>
             <StatusBadge status={event.status} />
             <Badge variant="outline">{label(event.kind)}</Badge>
           </div>
@@ -163,7 +163,7 @@ export default function EventDetailPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="flex items-center gap-2 text-base"><Users className="h-4 w-4" /> {past ? "Attendance" : "RSVPs"}</CardTitle>
-              <span className="text-sm font-semibold tabular-nums text-[#1F3A6A]">{attended}{event.capacity ? ` / ${event.capacity}` : ""}</span>
+              <span className="text-sm font-semibold tabular-nums text-[#008080]">{attended}{event.capacity ? ` / ${event.capacity}` : ""}</span>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex gap-2">
@@ -180,7 +180,7 @@ export default function EventDetailPage() {
                   const link = attendees.find((a) => a.person_id === p.id);
                   return (
                     <label key={p.id} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50">
-                      <input type="checkbox" checked={on} disabled={!writable} onChange={(e) => setAttendance.mutate({ personId: p.id, on: e.target.checked, name: p.full_name })} className="h-4 w-4 rounded border-gray-300 text-[#1F3A6A] focus:ring-[#1F3A6A]" />
+                      <input type="checkbox" checked={on} disabled={!writable} onChange={(e) => setAttendance.mutate({ personId: p.id, on: e.target.checked, name: p.full_name })} className="h-4 w-4 rounded border-gray-300 text-[#008080] focus:ring-[#008080]" />
                       <span className="min-w-0 flex-1 truncate">{p.full_name}<span className="ml-2 text-xs text-muted-foreground">{p.organisation?.name || label(p.type)}</span></span>
                       {on && past && (
                         <Select value={link?.rsvp ?? "attended"} onValueChange={(v) => setRsvp.mutate({ personId: p.id, rsvp: v })}>
@@ -207,7 +207,7 @@ export default function EventDetailPage() {
                 <ul className="space-y-1">
                   {speakers.map((sp) => (
                     <li key={sp.person_id} className="flex items-center gap-2 text-sm">
-                      <button className="flex-1 truncate text-left text-[#1F3A6A] hover:underline" onClick={() => navigate(`/people/${sp.person_id}`)}>{sp.person?.full_name}</button>
+                      <button className="flex-1 truncate text-left text-[#008080] hover:underline" onClick={() => navigate(`/people/${sp.person_id}`)}>{sp.person?.full_name}</button>
                       <button onClick={() => removeSpeaker.mutate(sp.person_id)} className="text-gray-400 hover:text-red-600" aria-label="Remove"><X className="h-4 w-4" /></button>
                     </li>
                   ))}
@@ -230,7 +230,7 @@ export default function EventDetailPage() {
                 <ul className="space-y-1">
                   {sponsors.map((o) => (
                     <li key={o.id} className="flex items-center gap-2 text-sm">
-                      <button className="flex-1 truncate text-left text-[#1F3A6A] hover:underline" onClick={() => navigate(`/organisations/${o.id}`)}>{o.name}</button>
+                      <button className="flex-1 truncate text-left text-[#008080] hover:underline" onClick={() => navigate(`/organisations/${o.id}`)}>{o.name}</button>
                       {o.tier && <StatusBadge status={o.tier} />}
                       <button onClick={() => removeSponsor.mutate(o.id)} className="text-gray-400 hover:text-red-600" aria-label="Remove"><X className="h-4 w-4" /></button>
                     </li>

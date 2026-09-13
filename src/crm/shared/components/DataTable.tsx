@@ -110,7 +110,7 @@ export function DataTable<T extends { id: string }>({
                     if (el) el.indeterminate = someSelected && !allSelected;
                   }}
                   onChange={toggleAll}
-                  className="h-4 w-4 rounded border-gray-300 text-[#1F3A6A] focus:ring-[#1F3A6A]"
+                  className="h-4 w-4 rounded border-gray-300 text-[#008080] focus:ring-[#008080]"
                 />
               </TableHead>
             )}
@@ -137,7 +137,7 @@ export function DataTable<T extends { id: string }>({
                   onClick={() => onRowClick?.(row)}
                   className={`${onRowClick ? "cursor-pointer" : ""} ${
                     isSelected
-                      ? "bg-[#1F3A6A]/5 hover:bg-[#1F3A6A]/10"
+                      ? "bg-[#008080]/5 hover:bg-[#008080]/10"
                       : "hover:bg-gray-50"
                   } ${getRowClassName ? getRowClassName(row) : ""}`}
                 >
@@ -147,7 +147,7 @@ export function DataTable<T extends { id: string }>({
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleRow(row.id)}
-                        className="h-4 w-4 rounded border-gray-300 text-[#1F3A6A] focus:ring-[#1F3A6A]"
+                        className="h-4 w-4 rounded border-gray-300 text-[#008080] focus:ring-[#008080]"
                       />
                     </TableCell>
                   )}

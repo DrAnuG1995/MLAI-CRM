@@ -74,7 +74,7 @@ export default function PersonDetailPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate("/people")}><ArrowLeft className="h-5 w-5" /></Button>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#1F3A6A]">{person.full_name}</h1>
+            <h1 className="text-2xl font-bold text-[#008080]">{person.full_name}</h1>
             <StatusBadge status={person.type} />
             <StatusBadge status={person.status} />
           </div>
@@ -98,11 +98,11 @@ export default function PersonDetailPage() {
             <CardHeader><CardTitle className="text-base">Details</CardTitle></CardHeader>
             <CardContent>
               <dl className="grid gap-4 sm:grid-cols-2">
-                <Field label="Email">{person.email ? <a className="text-[#1F3A6A] underline-offset-2 hover:underline" href={`mailto:${person.email}`}>{person.email}</a> : "—"}</Field>
+                <Field label="Email">{person.email ? <a className="text-[#008080] underline-offset-2 hover:underline" href={`mailto:${person.email}`}>{person.email}</a> : "—"}</Field>
                 <Field label="Phone">{person.phone || "—"}</Field>
                 <Field label="Slack">{person.slack_handle ? <span className="font-mono text-sm">{person.slack_handle}</span> : "—"}</Field>
-                <Field label="LinkedIn">{person.linkedin_url ? <a className="inline-flex items-center gap-1 text-[#1F3A6A] hover:underline" href={person.linkedin_url} target="_blank" rel="noopener">Profile <ExternalLink className="h-3 w-3" /></a> : "—"}</Field>
-                <Field label="Organisation">{person.organisation ? <Link className="text-[#1F3A6A] hover:underline" to={`/organisations/${person.organisation.id}`}>{person.organisation.name}</Link> : "—"}</Field>
+                <Field label="LinkedIn">{person.linkedin_url ? <a className="inline-flex items-center gap-1 text-[#008080] hover:underline" href={person.linkedin_url} target="_blank" rel="noopener">Profile <ExternalLink className="h-3 w-3" /></a> : "—"}</Field>
+                <Field label="Organisation">{person.organisation ? <Link className="text-[#008080] hover:underline" to={`/organisations/${person.organisation.id}`}>{person.organisation.name}</Link> : "—"}</Field>
                 <Field label="Added">{formatDate(person.created_at)}</Field>
                 <Field label="Tags" className="sm:col-span-2">
                   {person.tags?.length ? <div className="flex flex-wrap gap-1">{person.tags.map((t) => <Badge key={t} variant="outline" className="font-normal">{t}</Badge>)}</div> : "—"}

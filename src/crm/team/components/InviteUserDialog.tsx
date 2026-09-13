@@ -67,7 +67,7 @@ export default function InviteUserDialog({ open, onOpenChange }: { open: boolean
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label>Module access</Label>
-              {role && overridden && <button type="button" className="text-xs text-[#1F3A6A] hover:underline" onClick={() => { setPerms(defaultPermsForRole(role)); setOverridden(false); }}>Reset to {role} defaults</button>}
+              {role && overridden && <button type="button" className="text-xs text-[#008080] hover:underline" onClick={() => { setPerms(defaultPermsForRole(role)); setOverridden(false); }}>Reset to {role} defaults</button>}
             </div>
             {role ? (
               <PermissionMatrix value={perms} onChange={(next) => { setPerms(next); setOverridden(true); }} disabled={role === "admin"} />
@@ -78,7 +78,7 @@ export default function InviteUserDialog({ open, onOpenChange }: { open: boolean
         </div>
         <DialogFooter className="pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={() => mutation.mutate()} disabled={!canSubmit} className="bg-[#1F3A6A] hover:bg-[#1F3A6A]/90">{mutation.isPending ? "Sending…" : "Send invite"}</Button>
+          <Button onClick={() => mutation.mutate()} disabled={!canSubmit} className="bg-[#008080] hover:bg-[#008080]/90">{mutation.isPending ? "Sending…" : "Send invite"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

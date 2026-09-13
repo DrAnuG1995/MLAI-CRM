@@ -14,7 +14,7 @@ export default function ModuleGuard({ module, require = "read", redirectTo = "/d
   if (isLoading) {
     return (
       <div className="flex h-full min-h-[40vh] items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#1F3A6A] border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#008080] border-t-transparent" />
       </div>
     );
   }

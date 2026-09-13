@@ -15,7 +15,7 @@ export default function AuditLogTab() {
           <li key={e.id} className="flex items-start gap-4 px-4 py-3 text-sm">
             <span className="w-36 shrink-0 text-xs text-muted-foreground">{formatDateTime(e.created_at)}</span>
             <span className="min-w-0 flex-1">
-              <span className="font-medium text-[#1F3A6A]">{label(e.action)}</span>
+              <span className="font-medium text-[#008080]">{label(e.action)}</span>
               {e.module && <span className="text-muted-foreground"> · {e.module}</span>}
               <span className="text-gray-700"> — {who(e.actor)} → {who(e.target)}</span>
               {(e.before_value || e.after_value) && (

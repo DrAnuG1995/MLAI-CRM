@@ -32,10 +32,10 @@ export default function TeamPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1F3A6A]">Team</h1>
+          <h1 className="text-2xl font-bold text-[#008080]">Team</h1>
           <p className="mt-1 text-sm text-muted-foreground">Invite committee members, assign roles, and control access per module.</p>
         </div>
-        <Button onClick={() => setInviteOpen(true)} className="bg-[#1F3A6A] hover:bg-[#1F3A6A]/90"><UserPlus className="mr-2 h-4 w-4" /> Invite team member</Button>
+        <Button onClick={() => setInviteOpen(true)} className="bg-[#008080] hover:bg-[#008080]/90"><UserPlus className="mr-2 h-4 w-4" /> Invite team member</Button>
       </div>
 
       <Tabs defaultValue="members">

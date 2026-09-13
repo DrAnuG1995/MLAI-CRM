@@ -79,7 +79,7 @@ export default function OrganisationDetailPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate("/organisations")}><ArrowLeft className="h-5 w-5" /></Button>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#1F3A6A]">{org.name}</h1>
+            <h1 className="text-2xl font-bold text-[#008080]">{org.name}</h1>
             <StatusBadge status={org.kind} className="bg-gray-100 text-gray-800 border-gray-200" />
             {org.tier && <StatusBadge status={org.tier} />}
             <StatusBadge status={org.status} />

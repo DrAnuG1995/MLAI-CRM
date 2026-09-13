@@ -79,7 +79,7 @@ export function ActivityFeed({ module, entityId }: { module: Module; entityId: s
                 {LOG_TYPES.map((t) => <SelectItem key={t} value={t}>{label(t)}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Button type="submit" size="sm" disabled={!text.trim() || log.isPending} className="ml-auto bg-[#1F3A6A] hover:bg-[#1F3A6A]/90">
+            <Button type="submit" size="sm" disabled={!text.trim() || log.isPending} className="ml-auto bg-[#008080] hover:bg-[#008080]/90">
               <Send className="mr-2 h-4 w-4" /> Log
             </Button>
           </div>
@@ -100,7 +100,7 @@ export function ActivityFeed({ module, entityId }: { module: Module; entityId: s
             {items.map((a) => (
               <li key={a.id} className="py-3 text-sm">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-medium text-[#1F3A6A]">{label(a.action)}</span>
+                  <span className="font-medium text-[#008080]">{label(a.action)}</span>
                   <span className="text-xs text-muted-foreground">
                     {formatDateTime(a.created_at)}
                     {a.profile?.full_name || a.profile?.email ? ` · ${a.profile.full_name || a.profile.email}` : ""}

@@ -48,7 +48,7 @@ function DealCard({ deal, dragging, onOpen }: { deal: Deal; dragging?: boolean; 
           <div className="truncate text-sm font-medium text-gray-900">{deal.name}</div>
           <div className="truncate text-xs text-muted-foreground">{[deal.organisation?.name, deal.person?.full_name].filter(Boolean).join(" · ") || label(deal.kind)}</div>
           <div className="mt-2 flex items-center justify-between text-xs">
-            <span className="font-semibold tabular-nums text-[#1F3A6A]">{deal.value ? formatAUD(deal.value) : ""}</span>
+            <span className="font-semibold tabular-nums text-[#008080]">{deal.value ? formatAUD(deal.value) : ""}</span>
             <span className="text-muted-foreground">{deal.owner?.full_name?.split(" ")[0] || ""}</span>
           </div>
           {(deal.next_step || deal.due_date) && (
@@ -75,7 +75,7 @@ function StageColumn({ stage, deals, onOpen, readOnly }: { stage: PipelineStage;
   const { setNodeRef, isOver } = useDroppable({ id: stage.id });
   const total = deals.reduce((a, d) => a + Number(d.value || 0), 0);
   return (
-    <div ref={setNodeRef} className={`flex w-72 shrink-0 flex-col rounded-lg border bg-gray-100/70 transition-colors ${isOver ? "border-[#1F3A6A] bg-[#1F3A6A]/5" : ""}`}>
+    <div ref={setNodeRef} className={`flex w-72 shrink-0 flex-col rounded-lg border bg-gray-100/70 transition-colors ${isOver ? "border-[#008080] bg-[#008080]/5" : ""}`}>
       <div className="flex items-center gap-2 border-b px-3 py-2.5">
         <span className="h-2.5 w-2.5 rounded-full" style={{ background: stage.color }} />
         <span className="text-sm font-semibold text-gray-800">{stage.name}</span>
@@ -198,7 +198,7 @@ export default function PipelinePage() {
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: stages.find((s) => s.id === openDeal.stage_id)?.color }} />
                   <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{stages.find((s) => s.id === openDeal.stage_id)?.name} · {label(openDeal.kind)}</span>
                 </div>
-                <SheetTitle className="text-xl text-[#1F3A6A]">{openDeal.name}</SheetTitle>
+                <SheetTitle className="text-xl text-[#008080]">{openDeal.name}</SheetTitle>
               </SheetHeader>
 
               <div className="mt-4 flex flex-wrap gap-2">
@@ -212,10 +212,10 @@ export default function PipelinePage() {
               </div>
 
               <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
-                <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Value</dt><dd className="mt-1 font-semibold tabular-nums text-[#1F3A6A]">{formatAUD(openDeal.value)}</dd></div>
+                <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Value</dt><dd className="mt-1 font-semibold tabular-nums text-[#008080]">{formatAUD(openDeal.value)}</dd></div>
                 <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Owner</dt><dd className="mt-1">{openDeal.owner?.full_name || openDeal.owner?.email || "Unassigned"}</dd></div>
-                <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Organisation</dt><dd className="mt-1">{openDeal.organisation ? <button className="inline-flex items-center gap-1 text-[#1F3A6A] hover:underline" onClick={() => navigate(`/organisations/${openDeal.organisation!.id}`)}><Building2 className="h-3.5 w-3.5" />{openDeal.organisation.name}</button> : "—"}</dd></div>
-                <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Contact</dt><dd className="mt-1">{openDeal.person ? <button className="inline-flex items-center gap-1 text-[#1F3A6A] hover:underline" onClick={() => navigate(`/people/${openDeal.person!.id}`)}><User className="h-3.5 w-3.5" />{openDeal.person.full_name}</button> : "—"}</dd></div>
+                <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Organisation</dt><dd className="mt-1">{openDeal.organisation ? <button className="inline-flex items-center gap-1 text-[#008080] hover:underline" onClick={() => navigate(`/organisations/${openDeal.organisation!.id}`)}><Building2 className="h-3.5 w-3.5" />{openDeal.organisation.name}</button> : "—"}</dd></div>
+                <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Contact</dt><dd className="mt-1">{openDeal.person ? <button className="inline-flex items-center gap-1 text-[#008080] hover:underline" onClick={() => navigate(`/people/${openDeal.person!.id}`)}><User className="h-3.5 w-3.5" />{openDeal.person.full_name}</button> : "—"}</dd></div>
                 <div className="col-span-2"><dt className="text-xs uppercase tracking-wide text-muted-foreground">Next step</dt><dd className="mt-1">{openDeal.next_step || "—"}</dd></div>
                 <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Due</dt><dd className="mt-1 flex items-center gap-2">{formatDate(openDeal.due_date)}{openDeal.due_date && openDeal.due_date < todayISO() && !stages.find((s) => s.id === openDeal.stage_id)?.is_closed && <StatusBadge status="overdue" />}</dd></div>
                 <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Updated</dt><dd className="mt-1">{timeAgo(openDeal.updated_at)}</dd></div>

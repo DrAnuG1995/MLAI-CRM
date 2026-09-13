@@ -9,3 +9,4 @@ dist
 supabase/.temp
 # Member data exports stay out of the (public) repo
 supabase/seed/*.csv
+supabase/seed/*.sql

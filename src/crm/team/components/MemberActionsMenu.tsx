@@ -69,7 +69,7 @@ export default function MemberActionsMenu({ member, isSelf, isOnlyAdmin, onEdit 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className={confirm === "deactivate" ? "bg-red-600 hover:bg-red-700" : "bg-[#1F3A6A] hover:bg-[#1F3A6A]/90"}
+              className={confirm === "deactivate" ? "bg-red-600 hover:bg-red-700" : "bg-[#008080] hover:bg-[#008080]/90"}
               onClick={(e) => { e.preventDefault(); confirm === "deactivate" ? deactivate.mutate() : reactivate.mutate(); }}
             >
               {confirm === "deactivate" ? "Deactivate" : "Reactivate"}

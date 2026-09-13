@@ -32,6 +32,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import kangaroo from "@/assets/mlai-kangaroo.png";
 import { useCurrentUser } from "./shared/hooks/useCurrentUser";
 import type { AppModule } from "./shared/types";
 
@@ -54,7 +55,7 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
     "flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
     isActive
-      ? "bg-[#A4D65E]/20 text-[#A4D65E]"
+      ? "bg-[#00ffd7]/15 text-[#00ffd7]"
       : "text-white/70 hover:bg-white/10 hover:text-white"
   );
 
@@ -91,16 +92,14 @@ export default function CrmLayout() {
     <div className="crm-theme min-h-full">
       <SidebarProvider>
         <Sidebar className="border-r-0">
-          <SidebarHeader className="bg-[#1F3A6A] px-4 py-5">
+          <SidebarHeader className="bg-[#0b0b0b] px-4 py-5">
             <div className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#A4D65E] text-sm font-bold text-[#1F3A6A]">
-                ML
-              </span>
+              <img src={kangaroo} alt="" className="h-9 w-9" />
               <span className="text-lg font-bold tracking-tight text-white">MLAI</span>
               <span className="text-sm font-medium text-white/60">CRM</span>
             </div>
           </SidebarHeader>
-          <SidebarContent className="bg-[#1F3A6A]">
+          <SidebarContent className="bg-[#0b0b0b]">
             <SidebarGroup>
               <SidebarGroupLabel className="px-4 text-xs font-semibold uppercase tracking-wider text-white/50">
                 Modules
@@ -121,7 +120,7 @@ export default function CrmLayout() {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarFooter className="bg-[#1F3A6A] p-4 space-y-1">
+          <SidebarFooter className="bg-[#0b0b0b] p-4 space-y-1">
             {userEmail && (
               <div className="mb-2 truncate px-2 py-1 text-xs text-white/60" title={`Signed in as ${userEmail}`}>
                 Signed in as <span className="font-medium text-white/90">{userEmail}</span>
@@ -144,10 +143,10 @@ export default function CrmLayout() {
             <GlobalSearchTrigger onClick={() => setSearchOpen(true)} />
             <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
           </header>
-          <main className="flex-1 overflow-auto bg-gray-50 p-6">
+          <main className="flex-1 overflow-auto bg-[#f9f7f2] p-6">
             {!isLoading && (!profile || !profile.is_active) ? (
               <div className="mx-auto mt-16 max-w-md rounded-xl border bg-white p-8 text-center">
-                <h1 className="text-lg font-semibold text-[#1F3A6A]">No access</h1>
+                <h1 className="text-lg font-semibold text-[#008080]">No access</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {profile ? "This account has been deactivated." : "This account isn't part of the MLAI committee yet."} Ask an admin to invite you from the Team page.
                 </p>

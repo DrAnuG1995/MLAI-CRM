@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { FORM, CORE_FIELDS, type Q } from "@/crm/shared/memberForm";
+import kangaroo from "@/assets/mlai-kangaroo.png";
 
 type Answers = Record<string, string | string[] | boolean | undefined>;
 
@@ -50,11 +51,11 @@ export default function JoinPage() {
   };
 
   return (
-    <div className="min-h-full bg-[#F4F6F4] text-[#17211E]">
-      <header className="bg-[#1F3A6A] px-6 py-8 text-white">
+    <div className="min-h-full bg-[#f9f7f2] text-[#0b0b0b]">
+      <header className="bg-[#0b0b0b] px-6 py-8 text-white">
         <div className="mx-auto max-w-2xl">
           <div className="mb-4 flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#A4D65E] text-sm font-bold text-[#1F3A6A]">ML</span>
+            <img src={kangaroo} alt="" className="h-12 w-12" />
             <span className="text-lg font-bold tracking-tight">MLAI</span>
           </div>
           <h1 className="text-2xl font-bold sm:text-3xl">Tell us about you</h1>
@@ -66,16 +67,16 @@ export default function JoinPage() {
 
       <main className="mx-auto max-w-2xl px-4 py-8">
         {done ? (
-          <div className="rounded-2xl bg-white p-8 text-center shadow-sm">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#A4D65E]/30 text-2xl">✓</div>
-            <h2 className="text-xl font-bold text-[#1F3A6A]">Thanks — you're in.</h2>
+          <div className="rounded-2xl bg-[#f9f6f4] p-8 text-center shadow-sm ring-1 ring-black/5">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#00ffd7] text-2xl text-black">✓</div>
+            <h2 className="text-xl font-bold text-[#008080]">Thanks — you're in.</h2>
             <p className="mt-2 text-gray-600">We'll only reach out about the things you ticked. See you at the next meetup.</p>
           </div>
         ) : (
           <form onSubmit={submit} className="space-y-6" noValidate>
             {visible.map((s) => (
-              <section key={s.title} className="rounded-2xl bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-bold text-[#1F3A6A]">{s.title}</h2>
+              <section key={s.title} className="rounded-2xl bg-[#f9f6f4] p-6 shadow-sm ring-1 ring-black/5">
+                <h2 className="text-lg font-bold text-[#008080]">{s.title}</h2>
                 {s.blurb && <p className="mt-1 text-sm text-gray-600">{s.blurb}</p>}
                 <div className="mt-4 grid gap-5 sm:grid-cols-2">
                   {s.questions.map((q) => <Field key={q.id} q={q} value={a[q.id]} onChange={(v) => set(q.id, v)} />)}
@@ -85,7 +86,7 @@ export default function JoinPage() {
             {error && <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
             <div className="flex items-center justify-between gap-4">
               <p className="text-xs text-gray-500">Your details are only seen by the MLAI committee and never sold or shared.</p>
-              <button type="submit" disabled={busy} className="rounded-lg bg-[#1F3A6A] px-6 py-3 font-semibold text-white hover:bg-[#1F3A6A]/90 disabled:opacity-50">
+              <button type="submit" disabled={busy} className="rounded-lg bg-[#008080] px-6 py-3 font-semibold text-white hover:bg-[#008080]/90 disabled:opacity-50">
                 {busy ? "Sending…" : "Send"}
               </button>
             </div>
@@ -96,7 +97,7 @@ export default function JoinPage() {
   );
 }
 
-const inputCls = "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-[#1F3A6A] focus:outline-none focus:ring-2 focus:ring-[#1F3A6A]/20";
+const inputCls = "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-[#008080] focus:outline-none focus:ring-2 focus:ring-[#008080]/20";
 
 function Field({ q, value, onChange }: { q: Q; value: Answers[string]; onChange: (v: Answers[string]) => void }) {
   const wide = q.type === "textarea" || q.type === "multi" || (q.type === "yesno") || q.id === "email";
@@ -130,7 +131,7 @@ function Field({ q, value, onChange }: { q: Q; value: Answers[string]; onChange:
             const on = sel.includes(o);
             return (
               <button type="button" key={o} onClick={() => toggle(o)} aria-pressed={on}
-                className={`rounded-full border px-3 py-1.5 text-sm transition ${on ? "border-[#1F3A6A] bg-[#1F3A6A] text-white" : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"}`}>
+                className={`rounded-full border px-3 py-1.5 text-sm transition ${on ? "border-[#008080] bg-[#008080] text-white" : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"}`}>
                 {o}
               </button>
             );
@@ -146,7 +147,7 @@ function Field({ q, value, onChange }: { q: Q; value: Answers[string]; onChange:
         <div className="flex gap-2">
           {[["Yes", true], ["No", false]].map(([l, v]) => (
             <button type="button" key={String(l)} onClick={() => onChange(v as boolean)} aria-pressed={value === v}
-              className={`rounded-full border px-4 py-1.5 text-sm ${value === v ? "border-[#1F3A6A] bg-[#1F3A6A] text-white" : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"}`}>
+              className={`rounded-full border px-4 py-1.5 text-sm ${value === v ? "border-[#008080] bg-[#008080] text-white" : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"}`}>
               {l as string}
             </button>
           ))}

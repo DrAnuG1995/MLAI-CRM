@@ -135,7 +135,7 @@ export default function SubmissionsPage() {
           <Button variant="ghost" size="icon" onClick={() => { setOpen(null); setLinkTo(""); }}><ArrowLeft className="h-5 w-5" /></Button>
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold text-[#1F3A6A]">{open.first_name} {open.last_name}</h1>
+              <h1 className="text-2xl font-bold text-[#008080]">{open.first_name} {open.last_name}</h1>
               <Badge variant="outline">{open.source}</Badge>
               {open.reviewed_at && <StatusBadge status="done" />}
             </div>
@@ -156,7 +156,7 @@ export default function SubmissionsPage() {
                       <dd className="mt-1 text-sm">
                         {Array.isArray(v) ? <div className="flex flex-wrap gap-1">{v.map((x) => <Badge key={String(x)} variant="outline" className="font-normal">{String(x)}</Badge>)}</div>
                           : typeof v === "boolean" ? (v ? "Yes" : "No")
-                          : q.type === "url" ? <a className="inline-flex items-center gap-1 text-[#1F3A6A] hover:underline" href={String(v)} target="_blank" rel="noopener">{String(v)} <ExternalLink className="h-3 w-3" /></a>
+                          : q.type === "url" ? <a className="inline-flex items-center gap-1 text-[#008080] hover:underline" href={String(v)} target="_blank" rel="noopener">{String(v)} <ExternalLink className="h-3 w-3" /></a>
                           : <span className="whitespace-pre-wrap">{String(v)}</span>}
                       </dd>
                     </div>
@@ -170,7 +170,7 @@ export default function SubmissionsPage() {
             <CardContent className="space-y-4 pt-6">
               {open.reviewed_at && open.person ? (
                 <>
-                  <p className="text-sm">Linked to <button className="font-medium text-[#1F3A6A] hover:underline" onClick={() => navigate(`/people/${open.person!.id}`)}>{open.person.full_name}</button>.</p>
+                  <p className="text-sm">Linked to <button className="font-medium text-[#008080] hover:underline" onClick={() => navigate(`/people/${open.person!.id}`)}>{open.person.full_name}</button>.</p>
                   <Button variant="outline" className="w-full" onClick={() => navigate(`/people/${open.person!.id}`)}>Open person</Button>
                 </>
               ) : (
@@ -187,7 +187,7 @@ export default function SubmissionsPage() {
                       {people.filter((p) => p.id !== suggestion?.id).sort((x, y) => x.full_name.localeCompare(y.full_name)).slice(0, 2000).map((p) => <SelectItem key={p.id} value={p.id}>{p.full_name}{p.slack_handle ? ` · ${p.slack_handle}` : ""}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                  <Button disabled={!writable || apply.isPending} className="w-full bg-[#1F3A6A] hover:bg-[#1F3A6A]/90" onClick={() => apply.mutate({ s: open, personId: target || null })}>
+                  <Button disabled={!writable || apply.isPending} className="w-full bg-[#008080] hover:bg-[#008080]/90" onClick={() => apply.mutate({ s: open, personId: target || null })}>
                     {target ? <><Link2 className="mr-2 h-4 w-4" /> Merge into existing</> : <><UserPlus className="mr-2 h-4 w-4" /> Create person</>}
                   </Button>
                 </>
