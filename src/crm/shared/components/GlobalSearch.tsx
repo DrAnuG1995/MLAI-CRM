@@ -28,10 +28,10 @@ export function GlobalSearchTrigger({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="flex h-9 w-64 items-center gap-2 rounded-md border bg-gray-50 px-3 text-sm text-muted-foreground hover:bg-gray-100"
+      className="flex h-9 w-44 items-center gap-2 whitespace-nowrap rounded-md border bg-gray-50 px-3 text-sm text-muted-foreground hover:bg-gray-100"
     >
       <Search className="h-4 w-4" />
-      <span className="flex-1 text-left">Search people, orgs, deals…</span>
+      <span className="flex-1 text-left">Search</span>
       <kbd className="rounded border bg-white px-1.5 text-[10px] font-medium">⌘K</kbd>
     </button>
   );
