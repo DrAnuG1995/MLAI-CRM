@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { logActivity } from "../shared/logActivity";
 import { OrganisationDialog } from "./OrganisationDialog";
 import { PersonDialog } from "../people/PersonDialog";
+import { useCurrentUser } from "../shared/hooks/useCurrentUser";
 import { label } from "../shared/types";
 import type { Organisation, Person, Deal, Event } from "../shared/types";
 
@@ -21,6 +22,8 @@ export default function OrganisationDetailPage() {
   const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
   const [personOpen, setPersonOpen] = useState(false);
+  const { canWrite } = useCurrentUser();
+  const writable = canWrite("organisations");
 
   const { data: org, isLoading } = useQuery({
     queryKey: ["organisation", id],
@@ -87,8 +90,8 @@ export default function OrganisationDetailPage() {
         </div>
         <div className="flex gap-2">
           {org.website && <Button variant="outline" asChild><a href={org.website} target="_blank" rel="noopener"><ExternalLink className="mr-2 h-4 w-4" /> Website</a></Button>}
-          <Button variant="outline" onClick={() => setEditOpen(true)}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>
-          <Button variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${org.name}? People stay but lose the link; deals lose the link too.`)) remove.mutate(); }}><Trash2 className="h-4 w-4" /></Button>
+          {writable && <Button variant="outline" onClick={() => setEditOpen(true)}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>}
+          {writable && <Button variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${org.name}? People stay but lose the link; deals lose the link too.`)) remove.mutate(); }}><Trash2 className="h-4 w-4" /></Button>}
         </div>
       </div>
 
@@ -97,7 +100,7 @@ export default function OrganisationDetailPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="flex items-center gap-2 text-base"><Users className="h-4 w-4" /> People</CardTitle>
-              <Button size="sm" variant="outline" onClick={() => setPersonOpen(true)}>Add person</Button>
+              {canWrite("people") && <Button size="sm" variant="outline" onClick={() => setPersonOpen(true)}>Add person</Button>}
             </CardHeader>
             <CardContent className="p-0">
               {people.length === 0 ? <p className="px-6 pb-6 text-sm text-muted-foreground">No contacts here yet.</p> : (
@@ -125,7 +128,7 @@ export default function OrganisationDetailPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="flex items-center gap-2 text-base"><Handshake className="h-4 w-4" /> Deals</CardTitle>
-              <Button size="sm" variant="outline" onClick={() => navigate(`/pipeline?new=1&org=${org.id}`)}>New deal</Button>
+              {canWrite("pipeline") && <Button size="sm" variant="outline" onClick={() => navigate(`/pipeline?new=1&org=${org.id}`)}>New deal</Button>}
             </CardHeader>
             <CardContent className="p-0">
               {deals.length === 0 ? <p className="px-6 pb-6 text-sm text-muted-foreground">No deals yet.</p> : (

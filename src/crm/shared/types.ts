@@ -7,6 +7,10 @@ export type DealKind = "sponsorship" | "partnership" | "venue" | "grant" | "spea
 export type EventKind = "meetup" | "workshop" | "hackathon" | "panel" | "social" | "conference";
 export type EventStatus = "planned" | "published" | "done" | "cancelled";
 export type Module = "people" | "organisations" | "deals" | "events";
+/** Sidebar modules a user can be granted access to (matches public.app_modules). */
+export type AppModule = "dashboard" | "people" | "organisations" | "pipeline" | "events" | "team";
+export type UserRole = "admin" | "committee" | "volunteer" | "viewer";
+export type ModuleAccess = "off" | "read" | "full";
 
 export const ORG_KINDS: OrgKind[] = ["sponsor", "partner", "venue", "university", "startup", "enterprise", "government", "media"];
 export const ORG_TIERS: OrgTier[] = ["gold", "silver", "bronze", "community"];
@@ -27,8 +31,33 @@ export interface Profile {
   id: string;
   email: string | null;
   full_name: string | null;
-  role: "admin" | "member";
+  role: UserRole;
+  is_active: boolean;
+  deactivated_at: string | null;
+  last_seen_at: string | null;
   created_at: string;
+  updated_at?: string | null;
+}
+
+export interface UserModulePermission {
+  user_id: string;
+  module: AppModule;
+  access: ModuleAccess;
+  updated_at: string;
+}
+
+export interface TeamAuditEntry {
+  id: string;
+  actor_id: string | null;
+  target_user_id: string | null;
+  action: string;
+  module: string | null;
+  before_value: Record<string, unknown> | null;
+  after_value: Record<string, unknown> | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  actor?: Pick<Profile, "full_name" | "email"> | null;
+  target?: Pick<Profile, "full_name" | "email"> | null;
 }
 
 export interface Organisation {

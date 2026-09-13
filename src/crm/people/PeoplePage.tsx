@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Users, Search, Download } from "lucide-react";
 import { PersonDialog } from "./PersonDialog";
+import { useCurrentUser } from "../shared/hooks/useCurrentUser";
 import { PERSON_TYPES, FOLLOW_UP_DAYS, label } from "../shared/types";
 import type { Person } from "../shared/types";
 
@@ -47,6 +48,8 @@ export default function PeoplePage() {
   const [type, setType] = useState("all");
   const [status, setStatus] = useState("active");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { canWrite } = useCurrentUser();
+  const writable = canWrite("people");
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
@@ -101,8 +104,8 @@ export default function PeoplePage() {
       <PageHeader
         title="People"
         description={`${people.length} in the community · ${people.filter(isStale).length} need a follow-up`}
-        actionLabel="Add person"
-        onAction={() => setDialogOpen(true)}
+        actionLabel={writable ? "Add person" : undefined}
+        onAction={writable ? () => setDialogOpen(true) : undefined}
         extraActions={
           <Button variant="outline" onClick={() => downloadCSV(filtered)} disabled={!filtered.length}>
             <Download className="mr-2 h-4 w-4" /> CSV
@@ -135,7 +138,7 @@ export default function PeoplePage() {
       </div>
 
       {!isLoading && people.length === 0 ? (
-        <EmptyState icon={Users} title="No people yet" description="Members, speakers, sponsor contacts and volunteers all live here." actionLabel="Add person" onAction={() => setDialogOpen(true)} />
+        <EmptyState icon={Users} title="No people yet" description="Members, speakers, sponsor contacts and volunteers all live here." actionLabel={writable ? "Add person" : undefined} onAction={writable ? () => setDialogOpen(true) : undefined} />
       ) : (
         <DataTable columns={columns} data={filtered} loading={isLoading} onRowClick={(p) => navigate(`/people/${p.id}`)} emptyMessage="No one matches those filters" />
       )}

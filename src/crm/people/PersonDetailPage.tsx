@@ -12,6 +12,7 @@ import { ArrowLeft, Pencil, Trash2, Mail, ExternalLink, CalendarDays, Handshake 
 import { toast } from "sonner";
 import { logActivity } from "../shared/logActivity";
 import { PersonDialog } from "./PersonDialog";
+import { useCurrentUser } from "../shared/hooks/useCurrentUser";
 import { label } from "../shared/types";
 import type { Person, Deal, EventPerson, Event } from "../shared/types";
 
@@ -20,6 +21,8 @@ export default function PersonDetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
+  const { canWrite } = useCurrentUser();
+  const writable = canWrite("people");
 
   const { data: person, isLoading } = useQuery({
     queryKey: ["person", id],
@@ -82,10 +85,10 @@ export default function PersonDetailPage() {
         </div>
         <div className="flex gap-2">
           {person.email && <Button variant="outline" asChild><a href={`mailto:${person.email}`}><Mail className="mr-2 h-4 w-4" /> Email</a></Button>}
-          <Button variant="outline" onClick={() => setEditOpen(true)}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>
-          <Button variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${person.full_name}? This can't be undone.`)) remove.mutate(); }}>
+          {writable && <Button variant="outline" onClick={() => setEditOpen(true)}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>}
+          {writable && <Button variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${person.full_name}? This can't be undone.`)) remove.mutate(); }}>
             <Trash2 className="h-4 w-4" />
-          </Button>
+          </Button>}
         </div>
       </div>
 
@@ -135,7 +138,7 @@ export default function PersonDetailPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="flex items-center gap-2 text-base"><Handshake className="h-4 w-4" /> Deals</CardTitle>
-              <Button size="sm" variant="outline" onClick={() => navigate(`/pipeline?new=1&person=${person.id}${person.organisation_id ? `&org=${person.organisation_id}` : ""}`)}>New deal</Button>
+              {canWrite("pipeline") && <Button size="sm" variant="outline" onClick={() => navigate(`/pipeline?new=1&person=${person.id}${person.organisation_id ? `&org=${person.organisation_id}` : ""}`)}>New deal</Button>}
             </CardHeader>
             <CardContent className="p-0">
               {deals.length === 0 ? <p className="px-6 pb-6 text-sm text-muted-foreground">No deals attached.</p> : (

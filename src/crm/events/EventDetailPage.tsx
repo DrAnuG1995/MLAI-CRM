@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { logActivity } from "../shared/logActivity";
 import { EventDialog } from "./EventDialog";
 import { PersonDialog } from "../people/PersonDialog";
+import { useCurrentUser } from "../shared/hooks/useCurrentUser";
 import { label } from "../shared/types";
 import type { Event, EventPerson, Person, Organisation } from "../shared/types";
 
@@ -27,6 +28,8 @@ export default function EventDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [personOpen, setPersonOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const { canWrite } = useCurrentUser();
+  const writable = canWrite("events");
 
   const { data: event, isLoading } = useQuery({
     queryKey: ["event", id],
@@ -150,8 +153,8 @@ export default function EventDetailPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setEditOpen(true)}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>
-          <Button variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${event.title}? Attendance records go with it.`)) remove.mutate(); }}><Trash2 className="h-4 w-4" /></Button>
+          {writable && <Button variant="outline" onClick={() => setEditOpen(true)}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>}
+          {writable && <Button variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${event.title}? Attendance records go with it.`)) remove.mutate(); }}><Trash2 className="h-4 w-4" /></Button>}
         </div>
       </div>
 
@@ -168,7 +171,7 @@ export default function EventDetailPage() {
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search people to tick off…" className="pl-9" />
                 </div>
-                <Button variant="outline" onClick={() => setPersonOpen(true)}>New person</Button>
+                {writable && canWrite("people") && <Button variant="outline" onClick={() => setPersonOpen(true)}>New person</Button>}
               </div>
               <div className="max-h-[420px] divide-y overflow-y-auto rounded-md border">
                 {roster.length === 0 && <p className="p-4 text-sm text-muted-foreground">No one matches.</p>}
@@ -177,7 +180,7 @@ export default function EventDetailPage() {
                   const link = attendees.find((a) => a.person_id === p.id);
                   return (
                     <label key={p.id} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50">
-                      <input type="checkbox" checked={on} onChange={(e) => setAttendance.mutate({ personId: p.id, on: e.target.checked, name: p.full_name })} className="h-4 w-4 rounded border-gray-300 text-[#1F3A6A] focus:ring-[#1F3A6A]" />
+                      <input type="checkbox" checked={on} disabled={!writable} onChange={(e) => setAttendance.mutate({ personId: p.id, on: e.target.checked, name: p.full_name })} className="h-4 w-4 rounded border-gray-300 text-[#1F3A6A] focus:ring-[#1F3A6A]" />
                       <span className="min-w-0 flex-1 truncate">{p.full_name}<span className="ml-2 text-xs text-muted-foreground">{p.organisation?.name || label(p.type)}</span></span>
                       {on && past && (
                         <Select value={link?.rsvp ?? "attended"} onValueChange={(v) => setRsvp.mutate({ personId: p.id, rsvp: v })}>
@@ -210,7 +213,7 @@ export default function EventDetailPage() {
                   ))}
                 </ul>
               )}
-              <Select value={ADD} onValueChange={(v) => v !== ADD && addSpeaker.mutate(v)}>
+              <Select value={ADD} disabled={!writable} onValueChange={(v) => v !== ADD && addSpeaker.mutate(v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value={ADD}>Add a speaker…</SelectItem>
@@ -234,7 +237,7 @@ export default function EventDetailPage() {
                   ))}
                 </ul>
               )}
-              <Select value={ADD} onValueChange={(v) => v !== ADD && addSponsor.mutate(v)}>
+              <Select value={ADD} disabled={!writable} onValueChange={(v) => v !== ADD && addSponsor.mutate(v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value={ADD}>Add a sponsor…</SelectItem>

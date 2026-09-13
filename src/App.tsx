@@ -14,6 +14,9 @@ import PipelinePage from "@/crm/pipeline/PipelinePage";
 import EventsPage from "@/crm/events/EventsPage";
 import EventDetailPage from "@/crm/events/EventDetailPage";
 import TeamPage from "@/crm/team/TeamPage";
+import OnboardingPage from "@/crm/auth/OnboardingPage";
+import ModuleGuard from "@/crm/shared/components/ModuleGuard";
+import { InviteLinkRedirect } from "@/crm/auth/InviteLinkRedirect";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
@@ -29,20 +32,34 @@ export default function App() {
       <TooltipProvider>
         <Toaster />
         <HashRouter>
+          <InviteLinkRedirect />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route element={<AuthGuard />}>
+              <Route path="onboarding" element={<OnboardingPage />} />
               <Route element={<CrmLayout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
-                <Route path="dashboard" element={<DashboardPage />} />
-                <Route path="people" element={<PeoplePage />} />
-                <Route path="people/:id" element={<PersonDetailPage />} />
-                <Route path="organisations" element={<OrganisationsPage />} />
-                <Route path="organisations/:id" element={<OrganisationDetailPage />} />
-                <Route path="pipeline" element={<PipelinePage />} />
-                <Route path="events" element={<EventsPage />} />
-                <Route path="events/:id" element={<EventDetailPage />} />
-                <Route path="team" element={<TeamPage />} />
+                <Route element={<ModuleGuard module="dashboard" />}>
+                  <Route path="dashboard" element={<DashboardPage />} />
+                </Route>
+                <Route element={<ModuleGuard module="people" />}>
+                  <Route path="people" element={<PeoplePage />} />
+                  <Route path="people/:id" element={<PersonDetailPage />} />
+                </Route>
+                <Route element={<ModuleGuard module="organisations" />}>
+                  <Route path="organisations" element={<OrganisationsPage />} />
+                  <Route path="organisations/:id" element={<OrganisationDetailPage />} />
+                </Route>
+                <Route element={<ModuleGuard module="pipeline" />}>
+                  <Route path="pipeline" element={<PipelinePage />} />
+                </Route>
+                <Route element={<ModuleGuard module="events" />}>
+                  <Route path="events" element={<EventsPage />} />
+                  <Route path="events/:id" element={<EventDetailPage />} />
+                </Route>
+                <Route element={<ModuleGuard module="team" />}>
+                  <Route path="team" element={<TeamPage />} />
+                </Route>
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Route>
             </Route>

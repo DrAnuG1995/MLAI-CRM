@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarDays, MapPin, Users, Mic2 } from "lucide-react";
 import { EventDialog } from "./EventDialog";
+import { useCurrentUser } from "../shared/hooks/useCurrentUser";
 import { label } from "../shared/types";
 import type { Event } from "../shared/types";
 
@@ -67,6 +68,8 @@ export default function EventsPage() {
   const navigate = useNavigate();
   const { data: events = [], isLoading } = useEvents();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { canWrite } = useCurrentUser();
+  const writable = canWrite("events");
   const cutoff = `${todayISO()}T00:00:00`;
   const upcoming = events.filter((e) => e.starts_at >= cutoff && e.status !== "cancelled").sort((a, b) => a.starts_at.localeCompare(b.starts_at));
   const past = events.filter((e) => e.starts_at < cutoff || e.status === "cancelled");
@@ -77,12 +80,12 @@ export default function EventsPage() {
       <PageHeader
         title="Events"
         description={nextEvent ? `Next up: ${nextEvent.title} on ${formatDate(nextEvent.starts_at)}` : "Meetups, workshops, hackathons and socials"}
-        actionLabel="Add event"
-        onAction={() => setDialogOpen(true)}
+        actionLabel={writable ? "Add event" : undefined}
+        onAction={writable ? () => setDialogOpen(true) : undefined}
       />
 
       {!isLoading && events.length === 0 ? (
-        <EmptyState icon={CalendarDays} title="No events yet" description="Add the next meetup and start tracking who comes." actionLabel="Add event" onAction={() => setDialogOpen(true)} />
+        <EmptyState icon={CalendarDays} title="No events yet" description="Add the next meetup and start tracking who comes." actionLabel={writable ? "Add event" : undefined} onAction={writable ? () => setDialogOpen(true) : undefined} />
       ) : (
         <Tabs defaultValue="upcoming">
           <TabsList className="mb-4 bg-white">

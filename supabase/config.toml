@@ -1,0 +1,7 @@
+# Only the bits the CLI needs to deploy functions; the project itself lives
+# in the Supabase dashboard (ref skxurdbeyixpydqmnkqm).
+project_id = "mlai-crm"
+
+[functions.team-admin]
+# The function checks the caller's JWT itself (must be an active admin).
+verify_jwt = false

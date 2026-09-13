@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, Search } from "lucide-react";
 import { OrganisationDialog } from "./OrganisationDialog";
+import { useCurrentUser } from "../shared/hooks/useCurrentUser";
 import { ORG_KINDS, label } from "../shared/types";
 import type { Organisation, Deal, PipelineStage } from "../shared/types";
 
@@ -21,6 +22,8 @@ export default function OrganisationsPage() {
   const [search, setSearch] = useState("");
   const [kind, setKind] = useState("all");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { canWrite } = useCurrentUser();
+  const writable = canWrite("organisations");
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["organisations", "with-counts"],
@@ -72,7 +75,7 @@ export default function OrganisationsPage() {
 
   return (
     <div>
-      <PageHeader title="Organisations" description="Sponsors, partners, venues and universities" actionLabel="Add organisation" onAction={() => setDialogOpen(true)} />
+      <PageHeader title="Organisations" description="Sponsors, partners, venues and universities" actionLabel={writable ? "Add organisation" : undefined} onAction={writable ? () => setDialogOpen(true) : undefined} />
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="relative w-full max-w-sm">
@@ -90,7 +93,7 @@ export default function OrganisationsPage() {
       </div>
 
       {!isLoading && rows.length === 0 ? (
-        <EmptyState icon={Building2} title="No organisations yet" description="Add the companies that sponsor, host or partner with MLAI." actionLabel="Add organisation" onAction={() => setDialogOpen(true)} />
+        <EmptyState icon={Building2} title="No organisations yet" description="Add the companies that sponsor, host or partner with MLAI." actionLabel={writable ? "Add organisation" : undefined} onAction={writable ? () => setDialogOpen(true) : undefined} />
       ) : (
         <DataTable columns={columns} data={filtered} loading={isLoading} onRowClick={(o) => navigate(`/organisations/${o.id}`)} emptyMessage="No organisations match" />
       )}

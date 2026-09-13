@@ -15,6 +15,7 @@ import { GripVertical, Search, Pencil, Trash2, ExternalLink, User, Building2 } f
 import { toast } from "sonner";
 import { logActivity } from "../shared/logActivity";
 import { DealDialog } from "./DealDialog";
+import { useCurrentUser } from "../shared/hooks/useCurrentUser";
 import { label } from "../shared/types";
 import type { Deal, PipelineStage } from "../shared/types";
 
@@ -61,8 +62,8 @@ function DealCard({ deal, dragging, onOpen }: { deal: Deal; dragging?: boolean; 
   );
 }
 
-function DraggableDeal({ deal, onOpen }: { deal: Deal; onOpen: () => void }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: deal.id });
+function DraggableDeal({ deal, onOpen, disabled }: { deal: Deal; onOpen: () => void; disabled?: boolean }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: deal.id, disabled });
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} className="touch-none">
       <DealCard deal={deal} dragging={isDragging} onOpen={onOpen} />
@@ -70,7 +71,7 @@ function DraggableDeal({ deal, onOpen }: { deal: Deal; onOpen: () => void }) {
   );
 }
 
-function StageColumn({ stage, deals, onOpen }: { stage: PipelineStage; deals: Deal[]; onOpen: (d: Deal) => void }) {
+function StageColumn({ stage, deals, onOpen, readOnly }: { stage: PipelineStage; deals: Deal[]; onOpen: (d: Deal) => void; readOnly?: boolean }) {
   const { setNodeRef, isOver } = useDroppable({ id: stage.id });
   const total = deals.reduce((a, d) => a + Number(d.value || 0), 0);
   return (
@@ -82,7 +83,7 @@ function StageColumn({ stage, deals, onOpen }: { stage: PipelineStage; deals: De
         <span className="ml-auto text-xs tabular-nums text-muted-foreground">{formatAUD(total)}</span>
       </div>
       <div className="flex min-h-[120px] flex-1 flex-col gap-2 p-2">
-        {deals.map((d) => <DraggableDeal key={d.id} deal={d} onOpen={() => onOpen(d)} />)}
+        {deals.map((d) => <DraggableDeal key={d.id} deal={d} onOpen={() => onOpen(d)} disabled={readOnly} />)}
       </div>
     </div>
   );
@@ -98,6 +99,8 @@ export default function PipelinePage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [editing, setEditing] = useState<Deal | null>(null);
   const [dialogOpen, setDialogOpen] = useState(params.get("new") === "1");
+  const { canWrite } = useCurrentUser();
+  const writable = canWrite("pipeline");
   const newDefaults = useMemo(() => ({ organisation_id: params.get("org") ?? undefined, person_id: params.get("person") ?? undefined }), [params]);
 
   const openDealId = params.get("deal");
@@ -157,8 +160,8 @@ export default function PipelinePage() {
       <PageHeader
         title="Pipeline"
         description={`${open.length} open · ${formatAUD(open.reduce((a, d) => a + Number(d.value || 0), 0))} in play`}
-        actionLabel="New deal"
-        onAction={() => { setEditing(null); setDialogOpen(true); }}
+        actionLabel={writable ? "New deal" : undefined}
+        onAction={writable ? () => { setEditing(null); setDialogOpen(true); } : undefined}
       />
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -180,7 +183,7 @@ export default function PipelinePage() {
       ) : (
         <DndContext sensors={sensors} onDragStart={(e: DragStartEvent) => setActiveId(String(e.active.id))} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
           <div className="flex flex-1 gap-3 overflow-x-auto pb-4">
-            {stages.map((s) => <StageColumn key={s.id} stage={s} deals={filtered.filter((d) => d.stage_id === s.id)} onOpen={(d) => setOpenDeal(d.id)} />)}
+            {stages.map((s) => <StageColumn key={s.id} stage={s} deals={filtered.filter((d) => d.stage_id === s.id)} onOpen={(d) => setOpenDeal(d.id)} readOnly={!writable} />)}
           </div>
           <DragOverlay>{active ? <div className="w-72"><DealCard deal={active} /></div> : null}</DragOverlay>
         </DndContext>
@@ -199,13 +202,13 @@ export default function PipelinePage() {
               </SheetHeader>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <Select value={openDeal.stage_id} onValueChange={(v) => { const stage = stages.find((s) => s.id === v); if (stage) move.mutate({ deal: openDeal, stage }); }}>
+                <Select value={openDeal.stage_id} disabled={!writable} onValueChange={(v) => { const stage = stages.find((s) => s.id === v); if (stage) move.mutate({ deal: openDeal, stage }); }}>
                   <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
                   <SelectContent>{stages.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                 </Select>
-                <Button variant="outline" onClick={() => { setEditing(openDeal); setDialogOpen(true); }}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>
+                {writable && <Button variant="outline" onClick={() => { setEditing(openDeal); setDialogOpen(true); }}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>}
                 {openDeal.linear_url && <Button variant="outline" asChild><a href={openDeal.linear_url} target="_blank" rel="noopener"><ExternalLink className="mr-2 h-4 w-4" /> Linear</a></Button>}
-                <Button variant="outline" className="ml-auto text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${openDeal.name}?`)) remove.mutate(openDeal); }}><Trash2 className="h-4 w-4" /></Button>
+                {writable && <Button variant="outline" className="ml-auto text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${openDeal.name}?`)) remove.mutate(openDeal); }}><Trash2 className="h-4 w-4" /></Button>}
               </div>
 
               <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">

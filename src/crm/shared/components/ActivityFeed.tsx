@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { logActivity } from "../logActivity";
 import type { Activity, Module } from "../types";
 import { label } from "../types";
+import { useCurrentUser } from "../hooks/useCurrentUser";
 
 const LOG_TYPES = ["note", "email", "meeting", "slack", "call"];
 
@@ -24,6 +25,8 @@ export function ActivityFeed({ module, entityId }: { module: Module; entityId: s
   const queryClient = useQueryClient();
   const [type, setType] = useState("note");
   const [text, setText] = useState("");
+  const { canWrite } = useCurrentUser();
+  const writable = canWrite(module === "deals" ? "pipeline" : module);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["activity", module, entityId],
@@ -62,7 +65,7 @@ export function ActivityFeed({ module, entityId }: { module: Module; entityId: s
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <form
+        {writable && <form
           className="space-y-2"
           onSubmit={(e) => {
             e.preventDefault();
@@ -86,7 +89,7 @@ export function ActivityFeed({ module, entityId }: { module: Module; entityId: s
             placeholder="What happened? e.g. Sent the Gold tier deck — they'll come back next week"
             rows={2}
           />
-        </form>
+        </form>}
 
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Loading…</p>

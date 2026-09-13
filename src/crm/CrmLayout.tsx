@@ -32,19 +32,22 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCurrentUser } from "./shared/hooks/useCurrentUser";
+import type { AppModule } from "./shared/types";
 
 const navItems: Array<{
   to: string;
   icon: React.ComponentType<{ className?: string }>;
   label: string;
+  module: AppModule;
   end?: boolean;
 }> = [
-  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard", end: true },
-  { to: "/people", icon: Users, label: "People" },
-  { to: "/organisations", icon: Building2, label: "Organisations" },
-  { to: "/pipeline", icon: Handshake, label: "Pipeline" },
-  { to: "/events", icon: CalendarDays, label: "Events" },
-  { to: "/team", icon: UserCog, label: "Team" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard", module: "dashboard", end: true },
+  { to: "/people", icon: Users, label: "People", module: "people" },
+  { to: "/organisations", icon: Building2, label: "Organisations", module: "organisations" },
+  { to: "/pipeline", icon: Handshake, label: "Pipeline", module: "pipeline" },
+  { to: "/events", icon: CalendarDays, label: "Events", module: "events" },
+  { to: "/team", icon: UserCog, label: "Team", module: "team" },
 ];
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -59,6 +62,9 @@ export default function CrmLayout() {
   const navigate = useNavigate();
   const { open: searchOpen, setOpen: setSearchOpen } = useGlobalSearchShortcut();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const { canRead, profile, isLoading } = useCurrentUser();
+  // Only show modules this member can open; admins see everything.
+  const visibleNav = navItems.filter((item) => canRead(item.module));
 
   // Show who's signed in: every logged touch and stage move is attributed
   // to this account, so the committee member should be able to check it.
@@ -101,7 +107,7 @@ export default function CrmLayout() {
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {navItems.map((item) => (
+                  {visibleNav.map((item) => (
                     <SidebarMenuItem key={item.to}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.to} end={item.end} className={linkClass}>
@@ -139,7 +145,16 @@ export default function CrmLayout() {
             <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
           </header>
           <main className="flex-1 overflow-auto bg-gray-50 p-6">
-            <Outlet />
+            {!isLoading && (!profile || !profile.is_active) ? (
+              <div className="mx-auto mt-16 max-w-md rounded-xl border bg-white p-8 text-center">
+                <h1 className="text-lg font-semibold text-[#1F3A6A]">No access</h1>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {profile ? "This account has been deactivated." : "This account isn't part of the MLAI committee yet."} Ask an admin to invite you from the Team page.
+                </p>
+              </div>
+            ) : (
+              <Outlet />
+            )}
           </main>
         </SidebarInset>
       </SidebarProvider>
