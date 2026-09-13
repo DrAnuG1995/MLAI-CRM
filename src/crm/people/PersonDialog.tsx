@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { logActivity } from "../shared/logActivity";
-import { PERSON_TYPES, PERSON_STATUSES, label } from "../shared/types";
+import { PERSON_TYPES, PERSON_STATUSES, PROGRAMMES, label } from "../shared/types";
 import type { Person, Organisation } from "../shared/types";
 
 const NONE = "__none__";
@@ -173,6 +173,7 @@ export function PersonDialog({
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Tags</Label>
             <Input value={form.tags} onChange={(e) => set("tags")(e.target.value)} placeholder="comma-separated · nlp, founder, wants-to-speak" />
+            <p className="text-xs text-muted-foreground">Programmes: {PROGRAMMES.map((p, i) => <button type="button" key={p} className="text-[#008080] hover:underline" onClick={() => set("tags")(form.tags ? (form.tags.includes(p) ? form.tags : form.tags.replace(/,?\s*$/, "") + ", " + p) : p)}>{i ? " · " : ""}{p}</button>)}</p>
           </div>
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Notes</Label>

@@ -1,9 +1,10 @@
-export type OrgKind = "sponsor" | "partner" | "venue" | "university" | "startup" | "enterprise" | "government" | "media";
+export type OrgKind = "sponsor" | "partner" | "venue" | "university" | "startup" | "enterprise" | "government" | "media" | "grant_body" | "accelerator" | "community";
+export type OrgStage = "idea" | "pre_seed" | "seed" | "series_a_plus" | "bootstrapped" | "exited";
 export type OrgTier = "gold" | "silver" | "bronze" | "community";
 export type OrgStatus = "prospect" | "active" | "lapsed";
-export type PersonType = "member" | "speaker" | "sponsor_contact" | "partner" | "volunteer" | "organiser";
+export type PersonType = "member" | "speaker" | "sponsor_contact" | "partner" | "volunteer" | "organiser" | "founder" | "mentor" | "investor";
 export type PersonStatus = "active" | "inactive" | "unsubscribed";
-export type DealKind = "sponsorship" | "partnership" | "venue" | "grant" | "speaker";
+export type DealKind = "sponsorship" | "partnership" | "venue" | "grant" | "speaker" | "studio";
 export type EventKind = "meetup" | "workshop" | "hackathon" | "panel" | "social" | "conference";
 export type EventStatus = "planned" | "published" | "done" | "cancelled";
 export type Module = "people" | "organisations" | "deals" | "events";
@@ -12,12 +13,15 @@ export type AppModule = "dashboard" | "people" | "organisations" | "pipeline" | 
 export type UserRole = "admin" | "committee" | "volunteer" | "viewer";
 export type ModuleAccess = "off" | "read" | "full";
 
-export const ORG_KINDS: OrgKind[] = ["sponsor", "partner", "venue", "university", "startup", "enterprise", "government", "media"];
+export const ORG_KINDS: OrgKind[] = ["sponsor", "partner", "venue", "university", "startup", "accelerator", "community", "grant_body", "enterprise", "government", "media"];
+export const ORG_STAGES: OrgStage[] = ["idea", "pre_seed", "seed", "series_a_plus", "bootstrapped", "exited"];
+/** MLAI programmes (Linear projects) people take part in — offered as tags. */
+export const PROGRAMMES = ["vibe-mentors", "vibe-raising", "vibe-market", "codex-monthly", "mlai-studio", "build-day", "esafety-hack", "partner-engine"];
 export const ORG_TIERS: OrgTier[] = ["gold", "silver", "bronze", "community"];
 export const ORG_STATUSES: OrgStatus[] = ["prospect", "active", "lapsed"];
-export const PERSON_TYPES: PersonType[] = ["member", "speaker", "sponsor_contact", "partner", "volunteer", "organiser"];
+export const PERSON_TYPES: PersonType[] = ["member", "founder", "mentor", "speaker", "investor", "sponsor_contact", "partner", "volunteer", "organiser"];
 export const PERSON_STATUSES: PersonStatus[] = ["active", "inactive", "unsubscribed"];
-export const DEAL_KINDS: DealKind[] = ["sponsorship", "partnership", "venue", "grant", "speaker"];
+export const DEAL_KINDS: DealKind[] = ["sponsorship", "partnership", "studio", "grant", "venue", "speaker"];
 export const EVENT_KINDS: EventKind[] = ["meetup", "workshop", "hackathon", "panel", "social", "conference"];
 export const EVENT_STATUSES: EventStatus[] = ["planned", "published", "done", "cancelled"];
 
@@ -66,6 +70,8 @@ export interface Organisation {
   kind: OrgKind;
   tier: OrgTier | null;
   status: OrgStatus;
+  stage?: OrgStage | null;
+  linear_url?: string | null;
   website: string | null;
   location: string | null;
   notes: string | null;
@@ -138,6 +144,10 @@ export interface Event {
   venue_organisation_id: string | null;
   capacity: number | null;
   status: EventStatus;
+  cost?: number | null;
+  revenue?: number | null;
+  rating?: number | null;
+  linear_url?: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

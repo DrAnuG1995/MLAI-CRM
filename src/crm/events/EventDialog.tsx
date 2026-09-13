@@ -13,7 +13,7 @@ import { EVENT_KINDS, EVENT_STATUSES, label } from "../shared/types";
 import type { Event, Organisation } from "../shared/types";
 
 const NONE = "__none__";
-const empty = { title: "", kind: "meetup", status: "planned", date: "", time: "18:00", venue: "", venue_organisation_id: NONE, capacity: "", notes: "" };
+const empty = { title: "", kind: "meetup", status: "planned", date: "", time: "18:00", venue: "", venue_organisation_id: NONE, capacity: "", cost: "", revenue: "", rating: "", linear_url: "", notes: "" };
 
 /** Melbourne wall-clock → ISO. The browser may be anywhere; the event isn't. */
 function toISO(date: string, time: string) {
@@ -36,7 +36,7 @@ export function EventDialog({ open, onOpenChange, event, onSaved }: { open: bool
     if (!open) return;
     if (event) {
       const { date, time } = fromISO(event.starts_at);
-      setForm({ title: event.title, kind: event.kind, status: event.status, date, time, venue: event.venue ?? "", venue_organisation_id: event.venue_organisation_id ?? NONE, capacity: event.capacity ? String(event.capacity) : "", notes: event.notes ?? "" });
+      setForm({ title: event.title, kind: event.kind, status: event.status, date, time, venue: event.venue ?? "", venue_organisation_id: event.venue_organisation_id ?? NONE, capacity: event.capacity ? String(event.capacity) : "", cost: event.cost != null ? String(event.cost) : "", revenue: event.revenue != null ? String(event.revenue) : "", rating: event.rating != null ? String(event.rating) : "", linear_url: event.linear_url ?? "", notes: event.notes ?? "" });
     } else setForm(empty);
   }, [open, event]);
 
@@ -50,7 +50,10 @@ export function EventDialog({ open, onOpenChange, event, onSaved }: { open: bool
       const payload = {
         title: form.title.trim(), kind: form.kind, status: form.status, starts_at: toISO(form.date, form.time),
         venue: form.venue.trim() || null, venue_organisation_id: form.venue_organisation_id === NONE ? null : form.venue_organisation_id,
-        capacity: form.capacity ? Number(form.capacity) : null, notes: form.notes.trim() || null,
+        capacity: form.capacity ? Number(form.capacity) : null,
+        cost: form.cost !== "" ? Number(form.cost) : null, revenue: form.revenue !== "" ? Number(form.revenue) : null,
+        rating: form.rating !== "" ? Number(form.rating) : null, linear_url: form.linear_url.trim() || null,
+        notes: form.notes.trim() || null,
       };
       if (event) {
         const { error } = await supabase.from("events").update(payload).eq("id", event.id);
@@ -95,6 +98,10 @@ export function EventDialog({ open, onOpenChange, event, onSaved }: { open: bool
             <Select value={form.venue_organisation_id} onValueChange={set("venue_organisation_id")}><SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value={NONE}>—</SelectItem>{venues.map((o) => <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>)}</SelectContent></Select></div>
           <div className="space-y-1.5"><Label>Capacity</Label><Input type="number" min="0" value={form.capacity} onChange={(e) => set("capacity")(e.target.value)} /></div>
+          <div className="space-y-1.5"><Label>Linear project</Label><Input value={form.linear_url} onChange={(e) => set("linear_url")(e.target.value)} placeholder="https://linear.app/mlai-aus/project/…" /></div>
+          <div className="space-y-1.5"><Label>Cost (AUD)</Label><Input type="number" min="0" step="1" value={form.cost} onChange={(e) => set("cost")(e.target.value)} /></div>
+          <div className="space-y-1.5"><Label>Revenue (AUD)</Label><Input type="number" min="0" step="1" value={form.revenue} onChange={(e) => set("revenue")(e.target.value)} /></div>
+          <div className="space-y-1.5"><Label>Fun rating (1–5)</Label><Input type="number" min="1" max="5" step="0.1" value={form.rating} onChange={(e) => set("rating")(e.target.value)} placeholder="from the feedback form" /></div>
           <div className="space-y-1.5 sm:col-span-2"><Label>Notes</Label><Textarea value={form.notes} onChange={(e) => set("notes")(e.target.value)} rows={3} /></div>
           <DialogFooter className="sm:col-span-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>

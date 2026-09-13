@@ -13,7 +13,7 @@ import type { Activity, Module } from "../types";
 import { label } from "../types";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 
-const LOG_TYPES = ["note", "email", "meeting", "slack", "call"];
+const LOG_TYPES = ["note", "email", "meeting", "slack", "call", "testimonial"];
 
 /**
  * Per-record activity timeline with a quick "log a touch" form — the same

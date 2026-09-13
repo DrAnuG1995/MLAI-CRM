@@ -9,11 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { logActivity } from "../shared/logActivity";
-import { ORG_KINDS, ORG_TIERS, ORG_STATUSES, label } from "../shared/types";
+import { ORG_KINDS, ORG_TIERS, ORG_STATUSES, ORG_STAGES, label } from "../shared/types";
 import type { Organisation } from "../shared/types";
 
 const NONE = "__none__";
-const empty = { name: "", kind: "sponsor", tier: NONE, status: "prospect", website: "", location: "", notes: "" };
+const empty = { name: "", kind: "sponsor", tier: NONE, status: "prospect", stage: NONE, linear_url: "", website: "", location: "", notes: "" };
 
 export function OrganisationDialog({ open, onOpenChange, org, onSaved }: { open: boolean; onOpenChange: (o: boolean) => void; org?: Organisation | null; onSaved?: (id: string) => void }) {
   const queryClient = useQueryClient();
@@ -21,7 +21,7 @@ export function OrganisationDialog({ open, onOpenChange, org, onSaved }: { open:
 
   useEffect(() => {
     if (!open) return;
-    setForm(org ? { name: org.name, kind: org.kind, tier: org.tier ?? NONE, status: org.status, website: org.website ?? "", location: org.location ?? "", notes: org.notes ?? "" } : empty);
+    setForm(org ? { name: org.name, kind: org.kind, tier: org.tier ?? NONE, status: org.status, stage: org.stage ?? NONE, linear_url: org.linear_url ?? "", website: org.website ?? "", location: org.location ?? "", notes: org.notes ?? "" } : empty);
   }, [open, org]);
 
   const save = useMutation({
@@ -31,6 +31,8 @@ export function OrganisationDialog({ open, onOpenChange, org, onSaved }: { open:
         kind: form.kind,
         tier: form.tier === NONE ? null : form.tier,
         status: form.status,
+        stage: form.kind === "startup" && form.stage !== NONE ? form.stage : null,
+        linear_url: form.linear_url.trim() || null,
         website: form.website.trim() || null,
         location: form.location.trim() || null,
         notes: form.notes.trim() || null,
@@ -74,6 +76,10 @@ export function OrganisationDialog({ open, onOpenChange, org, onSaved }: { open:
           <div className="space-y-1.5"><Label>Sponsor tier</Label>
             <Select value={form.tier} onValueChange={set("tier")}><SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value={NONE}>—</SelectItem>{ORG_TIERS.map((k) => <SelectItem key={k} value={k}>{label(k)}</SelectItem>)}</SelectContent></Select></div>
+          {form.kind === "startup" && <div className="space-y-1.5"><Label>Stage</Label>
+            <Select value={form.stage} onValueChange={set("stage")}><SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent><SelectItem value={NONE}>—</SelectItem>{ORG_STAGES.map((k) => <SelectItem key={k} value={k}>{label(k)}</SelectItem>)}</SelectContent></Select></div>}
+          <div className="space-y-1.5"><Label>Linear project</Label><Input value={form.linear_url} onChange={(e) => set("linear_url")(e.target.value)} placeholder="https://linear.app/mlai-aus/project/…" /></div>
           <div className="space-y-1.5"><Label>Location</Label><Input value={form.location} onChange={(e) => set("location")(e.target.value)} placeholder="Melbourne" /></div>
           <div className="space-y-1.5 sm:col-span-2"><Label>Website</Label><Input value={form.website} onChange={(e) => set("website")(e.target.value)} placeholder="https://" /></div>
           <div className="space-y-1.5 sm:col-span-2"><Label>Notes</Label><Textarea value={form.notes} onChange={(e) => set("notes")(e.target.value)} rows={3} /></div>

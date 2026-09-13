@@ -22,7 +22,7 @@ function useMetrics() {
         supabase.from("organisations").select("id, tier, status"),
         supabase.from("pipeline_stages").select("*").order("position"),
         supabase.from("deals").select("id, name, value, stage_id, due_date, next_step, updated_at, organisation:organisations(name)"),
-        supabase.from("events").select("id, starts_at, status, capacity").lt("starts_at", `${today}T00:00:00`).neq("status", "cancelled"),
+        supabase.from("events").select("id, starts_at, status, capacity, cost, revenue, rating").lt("starts_at", `${today}T00:00:00`).neq("status", "cancelled"),
         supabase.from("events").select("id, title, kind, starts_at, venue, capacity, status").gte("starts_at", `${today}T00:00:00`).neq("status", "cancelled").order("starts_at").limit(6),
         supabase.from("activity_feed").select("*, profile:profiles(full_name, email)").order("created_at", { ascending: false }).limit(10),
       ]);
@@ -49,6 +49,12 @@ function useMetrics() {
       }
 
       const sumValue = (ds: Deal[]) => ds.reduce((a, d) => a + Number(d.value || 0), 0);
+      // Event OKRs from Linear initiatives: 80% of events at >=10% margin; fun rating > 4/5
+      const pastEv = events.data as Event[];
+      const withBudget = pastEv.filter((e) => e.revenue != null && e.revenue > 0);
+      const onMargin = withBudget.filter((e) => (e.revenue! - (e.cost || 0)) / e.revenue! >= 0.1).length;
+      const rated = pastEv.filter((e) => e.rating != null);
+      const avgRating = rated.length ? rated.reduce((a, e) => a + Number(e.rating), 0) / rated.length : null;
       return {
         people: people.data!.length,
         stale,
@@ -63,6 +69,10 @@ function useMetrics() {
         upcoming: upcoming.data as Event[],
         pastCount: pastIds.length,
         avgAttendance,
+        marginPct: withBudget.length ? Math.round((onMargin / withBudget.length) * 100) : null,
+        marginN: withBudget.length,
+        avgRating,
+        ratedN: rated.length,
         stages: stageList.map((s) => {
           const ds = allDeals.filter((d) => d.stage_id === s.id);
           return { ...s, count: ds.length, value: sumValue(ds) };
@@ -99,12 +109,13 @@ export default function DashboardPage() {
     <div>
       <PageHeader title="Dashboard" description="Overview of the MLAI community" />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <MetricCard title="People" value={v(m?.people ?? 0)} subtitle={`${m?.stale.length ?? 0} need a follow-up`} icon={Users} onClick={() => navigate("/people")} />
         <MetricCard title="Organisations" value={v(m?.orgs ?? 0)} subtitle={`${m?.tieredSponsors ?? 0} active tiered sponsors`} icon={Building2} onClick={() => navigate("/organisations")} />
         <MetricCard title="Open pipeline" value={v(formatAUD(m?.openValue))} subtitle={`${m?.openCount ?? 0} open · ${m?.overdue.length ?? 0} overdue`} icon={Handshake} onClick={() => navigate("/pipeline")} />
         <MetricCard title={`Won in ${m?.year ?? ""}`} value={v(formatAUD(m?.wonValue))} subtitle={`${m?.wonCount ?? 0} deal${m?.wonCount === 1 ? "" : "s"}`} icon={Trophy} onClick={() => navigate("/pipeline")} />
         <MetricCard title="Events" value={v(m?.upcoming.length ?? 0)} subtitle={`upcoming · avg ${m?.avgAttendance ?? 0} at ${m?.pastCount ?? 0} past`} icon={CalendarDays} onClick={() => navigate("/events")} />
+        <MetricCard title="Event OKRs" value={v(m?.marginPct != null ? `${m.marginPct}%` : "—")} subtitle={`at ≥10% margin (${m?.marginN ?? 0} costed) · fun ${m?.avgRating != null ? m.avgRating.toFixed(1) : "—"}/5 (${m?.ratedN ?? 0})`} icon={Trophy} onClick={() => navigate("/events")} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">

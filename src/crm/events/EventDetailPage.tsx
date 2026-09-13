@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { formatDateTime, todayISO } from "@/lib/datetime";
+import { formatDateTime, todayISO, formatAUD } from "@/lib/datetime";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatusBadge } from "../shared/components/StatusBadge";
 import { ActivityFeed } from "../shared/components/ActivityFeed";
-import { ArrowLeft, Pencil, Trash2, MapPin, Users, Mic2, Building2, Search, X } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, MapPin, Users, Mic2, Building2, Search, X, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { logActivity } from "../shared/logActivity";
 import { EventDialog } from "./EventDialog";
@@ -153,6 +153,7 @@ export default function EventDetailPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          {event.linear_url && <Button variant="outline" asChild><a href={event.linear_url} target="_blank" rel="noopener"><ExternalLink className="mr-2 h-4 w-4" /> Linear</a></Button>}
           {writable && <Button variant="outline" onClick={() => setEditOpen(true)}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>}
           {writable && <Button variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => { if (confirm(`Delete ${event.title}? Attendance records go with it.`)) remove.mutate(); }}><Trash2 className="h-4 w-4" /></Button>}
         </div>
@@ -247,6 +248,19 @@ export default function EventDetailPage() {
             </CardContent>
           </Card>
 
+          {(event.cost != null || event.revenue != null || event.rating != null) && (
+            <Card>
+              <CardHeader><CardTitle className="text-base">Budget &amp; feedback</CardTitle></CardHeader>
+              <CardContent>
+                <dl className="grid grid-cols-2 gap-3 text-sm">
+                  <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Cost</dt><dd className="tabular-nums">{event.cost != null ? formatAUD(event.cost) : "—"}</dd></div>
+                  <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Revenue</dt><dd className="tabular-nums">{event.revenue != null ? formatAUD(event.revenue) : "—"}</dd></div>
+                  <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Margin</dt><dd className="tabular-nums">{event.revenue ? `${Math.round(((event.revenue - (event.cost || 0)) / event.revenue) * 100)}%` : "—"}{event.revenue && (event.revenue - (event.cost || 0)) / event.revenue >= 0.1 ? <span className="ml-2 text-xs text-green-700">≥10% ✓</span> : null}</dd></div>
+                  <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Fun rating</dt><dd className="tabular-nums">{event.rating != null ? `${event.rating} / 5` : "—"}{event.rating != null && event.rating > 4 ? <span className="ml-2 text-xs text-green-700">&gt;4 ✓</span> : null}</dd></div>
+                </dl>
+              </CardContent>
+            </Card>
+          )}
           {event.notes && (
             <Card>
               <CardHeader><CardTitle className="text-base">Notes</CardTitle></CardHeader>
