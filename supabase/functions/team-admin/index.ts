@@ -128,9 +128,33 @@ async function writeAudit(ctx: Ctx, action: string, targetUserId: string | null,
   });
 }
 
+/** True when the account was invited but never finished signing in. */
+async function isPendingAccount(ctx: Ctx, userId: string): Promise<boolean> {
+  const { data: profile } = await ctx.supabase.from("profiles").select("last_seen_at").eq("id", userId).single();
+  if (profile?.last_seen_at) return false;
+  const { data } = await ctx.supabase.auth.admin.getUserById(userId);
+  return !data?.user?.last_sign_in_at;
+}
+
+/** Remove a never-used account so a fresh invite can be issued (cascades profile + permissions). */
+async function discardPendingAccount(ctx: Ctx, userId: string) {
+  const { error } = await ctx.supabase.auth.admin.deleteUser(userId);
+  if (error) throw new Error(`could not replace pending account: ${error.message}`);
+}
+
 async function handleInvite(p: z.infer<typeof inviteSchema>, ctx: Ctx, req: Request) {
-  const { data: existing } = await ctx.supabase.from("profiles").select("id").ilike("email", p.email).maybeSingle();
-  if (existing) return jsonResponse(409, { ok: false, error: "user_already_exists" }, req);
+  const { data: existing } = await ctx.supabase.from("profiles").select("id, is_active").ilike("email", p.email).maybeSingle();
+  if (existing) {
+    // A pending invite (accepted or not, active or deactivated) is simply replaced.
+    if (await isPendingAccount(ctx, existing.id)) {
+      await discardPendingAccount(ctx, existing.id);
+      await writeAudit(ctx, "invite_replaced", null, null, { user_id: existing.id }, { email: p.email });
+    } else if (!existing.is_active) {
+      return jsonResponse(409, { ok: false, error: "user_deactivated" }, req);
+    } else {
+      return jsonResponse(409, { ok: false, error: "user_already_exists" }, req);
+    }
+  }
 
   // The DB trigger reads full_name + role from this metadata and seeds the
   // role's default permissions; overrides are layered on afterwards.
@@ -150,22 +174,29 @@ async function handleInvite(p: z.infer<typeof inviteSchema>, ctx: Ctx, req: Requ
 }
 
 async function handleResendInvite(p: z.infer<typeof resendInviteSchema>, ctx: Ctx, req: Request) {
-  const { data: profile } = await ctx.supabase.from("profiles").select("id, email").eq("id", p.user_id).single();
+  const { data: profile } = await ctx.supabase.from("profiles").select("id, email, full_name, role").eq("id", p.user_id).single();
   if (!profile?.email) return denied(req);
-  const { error } = await ctx.supabase.auth.admin.inviteUserByEmail(profile.email, { redirectTo: REDIRECT_TO });
-  if (error) {
-    // They clicked the first link (which confirms the email) but never set a
-    // password — a recovery email gets them in.
-    if (/already/i.test(error.message)) {
-      const { error: recErr } = await ctx.supabaseAuth.auth.resetPasswordForEmail(profile.email, { redirectTo: REDIRECT_TO });
-      if (recErr) return jsonResponse(500, { ok: false, error: `resend_failed: ${recErr.message}` }, req);
-      await writeAudit(ctx, "invite_resent", p.user_id, null, null, { email: profile.email, mode: "recovery" });
-      return jsonResponse(200, { ok: true, mode: "recovery" }, req);
-    }
-    return jsonResponse(500, { ok: false, error: `resend_failed: ${error.message}` }, req);
+  if (!(await isPendingAccount(ctx, profile.id))) {
+    // They have signed in before, so a fresh invite would be wrong — send a password reset.
+    const { error: recErr } = await ctx.supabaseAuth.auth.resetPasswordForEmail(profile.email, { redirectTo: REDIRECT_TO });
+    if (recErr) return jsonResponse(500, { ok: false, error: `resend_failed: ${recErr.message}` }, req);
+    await writeAudit(ctx, "invite_resent", p.user_id, null, null, { email: profile.email, mode: "recovery" });
+    return jsonResponse(200, { ok: true, mode: "recovery" }, req);
   }
-  await writeAudit(ctx, "invite_resent", p.user_id, null, null, { email: profile.email });
-  return jsonResponse(200, { ok: true }, req);
+  // Supabase refuses to re-invite an existing user, so recreate the pending
+  // account with the same role, name and permissions and invite it afresh.
+  const { data: perms } = await ctx.supabase.from("user_module_permissions").select("module, access").eq("user_id", profile.id);
+  await discardPendingAccount(ctx, profile.id);
+  const { data: invited, error } = await ctx.supabase.auth.admin.inviteUserByEmail(profile.email, {
+    data: { full_name: profile.full_name, role: profile.role },
+    redirectTo: REDIRECT_TO,
+  });
+  if (error || !invited?.user) return jsonResponse(500, { ok: false, error: `resend_failed: ${error?.message ?? "no user returned"}` }, req);
+  if (perms?.length) {
+    await ctx.supabase.from("user_module_permissions").upsert(perms.map((r) => ({ user_id: invited.user!.id, module: r.module, access: r.access })), { onConflict: "user_id,module" });
+  }
+  await writeAudit(ctx, "invite_resent", invited.user.id, null, { user_id: profile.id }, { email: profile.email, mode: "reissued" });
+  return jsonResponse(200, { ok: true, mode: "reissued", user: { id: invited.user.id } }, req);
 }
 
 async function handleChangeRole(p: z.infer<typeof changeRoleSchema>, ctx: Ctx, req: Request) {

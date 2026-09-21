@@ -37,6 +37,7 @@ export default function InviteUserDialog({ open, onOpenChange }: { open: boolean
     },
     onError: (e: Error) => {
       const msg = e.message === "user_already_exists" ? "Someone with that email is already on the team."
+        : e.message === "user_deactivated" ? "That person is deactivated — reactivate them from the Deactivated tab instead of re-inviting."
         : e.message === "forbidden" ? "Only an active admin can invite people."
         : e.message;
       toast.error(msg);
